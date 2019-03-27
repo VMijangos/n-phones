@@ -57,4 +57,4 @@ class nPhones:
 	def get_phones(self):
 		self.word_phones = self.n_phones()
 		self.voc = self.vocab()
-		self.list_idx_phones = list(self.word_idx(self.word_phones, self.voc))
+		self.idx_phones = list(self.word_idx(self.word_phones, self.voc))
