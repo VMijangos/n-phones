@@ -3,8 +3,6 @@ from collections import defaultdict
 from itertools import chain
 import numpy as np
 
-
-
 class nPhones:
 	#file <- Archivo de entrada
 	#nphone_siz <- Tamaño de los n-phones/grams que se obtendrán. Si no hay argumento, n=3
