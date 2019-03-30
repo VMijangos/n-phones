@@ -1,6 +1,7 @@
+import numpy as np
+from collections import Counter, defaultdict
 from re import sub
-from collections import defaultdict
-from itertools import chain
+from itertools import chain, combinations
 import numpy as np
 
 class nPhones:
@@ -58,3 +59,51 @@ class nPhones:
 		self.word_phones = self.n_phones()
 		self.voc = self.vocab()
 		self.idx_phones = list(self.word_idx(self.word_phones, self.voc))
+
+
+class entropy_complexity:
+	def __init__(self,nphones):
+		super().__init__()
+		nphones.get_phones()
+		self.Voc = nphones.voc
+		self.N = len(self.Voc)
+		self.ngrams = nphones.word_phones
+		self.size = nphones.ngram_siz
+
+	#Define una funcion de probabilidad
+	def get_probs(self):
+		frecs = Counter(chain(*self.ngrams))
+		last = defaultdict(list)
+
+		#Se ordenan los nphones a partir de la última letra
+		#esta letra corresponde a lo que se condicionea en la prob p(last|...)
+		for phone in self.Voc.keys():
+			last[phone[-1]].append( phone )
+
+		probs = []
+		for char, phones in last.items():
+			fr_last = np.zeros(len(phones))
+			for k,ph in enumerate(phones):
+				#frecuencias del nphone fr{p1,p2,...,pi-1,pi}
+				fr_last[k] = (frecs[ph])
+
+			#se obtienes las probabilidades fr/sum(fr) para cada nphone
+			pre_probs = zip( phones,fr_last/sum(fr_last) )
+			probs.append(pre_probs)
+
+		return( dict(chain(*probs)) )
+	
+	Entropy = None
+	#Función para obtener entropia por palabras y el promedio de estas entropias
+	def word_entropy(self):
+		phone_probs = self.get_probs()
+		word_entropies = {}
+		
+		#Se calcula el promedio por palabra en base a sus nphones
+		for w in self.ngrams:
+			word = ''.join([p[0] for p in w] + [w[-1][1:]])
+			word_entropies[word] = -sum([phone_probs[p]*np.log2(phone_probs[p]) for p in w]) 
+	
+		#Se obtiene el promedio de estas entropias
+		self.Entropy  = sum(word_entropies.values())/len(word_entropies)
+		return word_entropies
