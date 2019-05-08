@@ -5,11 +5,12 @@ from collections import defaultdict, Counter
 from itertools import chain
 import numpy as np
 
+#Abre el archivo
 file = open(argv[1], 'r')
-phones = nPhones(file.read(),nphone_siz=3)
-phones.get_phones()
-#print(phones.voc)
 
+#Estrae los nphones. Puede variar el tamaño del nphone: uniphone, triphone, etc.
+phones = nPhones(file.read(),nphone_siz=1)
+phones.get_phones()
 
 #Funcion que crea un vocabulario de palabras con un indice numerico
 def vocab():
@@ -50,6 +51,7 @@ z = sum(uni_freqs.values())
 logP = np.log(P)
 
 #Se inicializa la entropía en 0
+#Entropía normal (H) y normalizada entre 0 y 1 (Hnorm)
 H = 0.0
 Hnorm = 0.0
 for w,i in voc.items():
